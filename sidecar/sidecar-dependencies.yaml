@@ -12,6 +12,11 @@ spec:
     container:
       image: alpine:3.7
       command: [echo, "{{inputs.parameters.message}}"]
+  - name: spring-boot-container
+    container:
+        image: voyant/spring-admin
+        ports:
+        - containerPort: 8081
   - name: diamond
     dag:
       tasks:
@@ -32,8 +37,3 @@ spec:
       - name: D
         dependencies: [B, C]
         template: spring-boot-container
-  - name: spring-boot-container
-    container:
-        image: voyant/spring-admin
-        ports:
-        - containerPort: 8081
