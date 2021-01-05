@@ -31,6 +31,9 @@ spec:
           parameters: [{name: message, value: C}]
       - name: D
         dependencies: [B, C]
-        template: echo
-        arguments:
-          parameters: [{name: message, value: D}]
+        template: spring-boot-container
+  - name: spring-boot-container
+    container:
+        image: voyant/spring-admin
+        ports:
+        - containerPort: 8081
