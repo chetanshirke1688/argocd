@@ -11,7 +11,7 @@ spec:
       resource: 
         action: create
         failureCondition: "status.failed > 3"
-        manifest:
+        manifest: |               #put your kubernetes spec here
           apiVersion: apps/v1
           kind: Deployment
           metadata: 
@@ -36,4 +36,3 @@ spec:
                     ports: 
                       - 
                         containerPort: 9080
-        successCondition: "status.succeeded > 0"
