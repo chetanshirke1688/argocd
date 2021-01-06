@@ -12,8 +12,9 @@ spec:
     sidecars:
     - name: nginx
       image: nginx:1.13
-    resource:                   # indicates that this is a resource template
-      action: apply           
+    resource:                   
+      action: apply
+      name: spring-boot-app      
       successCondition: status.succeeded > 0
       failureCondition: status.failed > 3
       manifest:                #put your kubernetes spec here
