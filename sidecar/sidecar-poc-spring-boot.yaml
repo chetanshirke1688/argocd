@@ -10,7 +10,7 @@ spec:
   templates:
   - name: pi-tmpl
     resource:                   # indicates that this is a resource template
-      action: create            # can be any kubectl action (e.g. create, delete, apply, patch)
+      action: apply            # can be any kubectl action (e.g. create, delete, apply, patch)
       # The successCondition and failureCondition are optional expressions.
       # If failureCondition is true, the step is considered failed.
       # If successCondition is true, the step is considered successful.
@@ -21,18 +21,27 @@ spec:
       successCondition: status.succeeded > 0
       failureCondition: status.failed > 3
       manifest: |               #put your kubernetes spec here
-        apiVersion: batch/v1
-        kind: Job
-        metadata:
-          name: k8s-jobs-poc
-        spec:
-          template:
-            metadata:
-              name: pi
-            spec:
-              containers:
-              - name: pi
-                image: perl
-                command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
-              restartPolicy: Never
-          backoffLimit: 4
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata: 
+          labels: 
+            app: spring-boot-app
+          name: spring-boot-app
+        spec: 
+          replicas: 1
+          selector: 
+            matchLabels: 
+              app: spring-boot-app
+          template: 
+            metadata: 
+              labels: 
+                app: spring-boot-app
+            spec: 
+              containers: 
+                - 
+                  image: gazgeek/springboot-helloworld
+                  imagePullPolicy: IfNotPresent
+                  name: springboot-helloworld
+                  ports: 
+                    - 
+                      containerPort: 9080
