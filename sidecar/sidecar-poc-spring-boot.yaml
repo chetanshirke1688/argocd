@@ -6,8 +6,32 @@ spec:
   entrypoint: sidecar-spring-boot-example
   templates:
   - name: sidecar-spring-boot-nginx-example
-    container:
-      image: gazgeek/springboot-helloworld
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: details-v1
+      labels:
+        app: details
+        version: v1
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: details
+          version: v1
+      template:
+        metadata:
+          labels:
+            app: details
+            version: v1
+        spec:
+          serviceAccountName: bookinfo-details
+          containers:
+          - name: details
+            image: gazgeek/springboot-helloworld
+            imagePullPolicy: IfNotPresent
+            ports:
+            - containerPort: 9080
     # Create a simple nginx web server
     sidecars:
     - name: nginx
