@@ -1,11 +1,12 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Deployment
+kind: Workflow
 metadata:
   name: sidecar-spring-boot-workflow
 spec:
   entrypoint: sidecar-spring-boot-example
   templates:
   - name: sidecar-spring-boot-nginx-example
+    daemon: true
     container:
       image: gazgeek/springboot-helloworld
     # Create a simple nginx web server
