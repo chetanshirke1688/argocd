@@ -11,7 +11,7 @@ spec:
         action: apply
         manifest:
           apiVersion: apps/v1
-          kind: Job
+          kind: Deployment
           metadata: 
             labels: 
               app: spring-boot-app
