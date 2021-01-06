@@ -20,7 +20,7 @@ spec:
       # For more details: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
       successCondition: status.succeeded > 0
       failureCondition: status.failed > 3
-      manifest: |               #put your kubernetes spec here
+      manifest:               #put your kubernetes spec here
         apiVersion: apps/v1
         kind: Deployment
         metadata: 
