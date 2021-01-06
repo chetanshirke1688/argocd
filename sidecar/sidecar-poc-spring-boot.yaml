@@ -1,15 +1,38 @@
+# in a workflow. The resource template type accepts any k8s manifest
+# (including CRDs) and can perform any kubectl action against it (e.g. create,
+# apply, delete, patch).
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: sidecar-spring-boot-workflow
+  Name: k8s-jobs-
 spec:
-  entrypoint: sidecar-spring-boot-example
+  entrypoint: spring-boot-deployment
   templates:
-  - name: sidecar-spring-boot-nginx-example
-    daemon: true
-    container:
-      image: gazgeek/springboot-helloworld
-    # Create a simple nginx web server
+  - name: spring-boot-deployment
     sidecars:
     - name: nginx
       image: nginx:1.13
+    resource:                   # indicates that this is a resource template
+      action: apply           
+      successCondition: status.succeeded > 0
+      failureCondition: status.failed > 3
+      manifest:                #put your kubernetes spec here
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          labels:
+            app: spring-boot-app
+          name: spring-boot-app
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              app: spring-boot-app
+          template:
+            metadata:
+              labels:
+                app: spring-boot-app
+            spec:
+              containers:
+              - image: gazgeek/springboot-helloworld
+                name: springboot-helloworld
