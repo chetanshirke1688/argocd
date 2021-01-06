@@ -4,39 +4,35 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  Name: k8s-jobs-
+  generateName: k8s-jobs-
 spec:
-  entrypoint: spring-boot-deployment
+  entrypoint: pi-tmpl
   templates:
-  - name: spring-boot-deployment
-    sidecars:
-    - name: nginx
-      image: nginx:1.13
-    resource:                   
-      action: create
-      name: spring-boot-app      
+  - name: pi-tmpl
+    resource:                   # indicates that this is a resource template
+      action: create            # can be any kubectl action (e.g. create, delete, apply, patch)
+      # The successCondition and failureCondition are optional expressions.
+      # If failureCondition is true, the step is considered failed.
+      # If successCondition is true, the step is considered successful.
+      # They use kubernetes label selection syntax and can be applied against any field
+      # of the resource (not just labels). Multiple AND conditions can be represented by comma
+      # delimited expressions.
+      # For more details: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
       successCondition: status.succeeded > 0
       failureCondition: status.failed > 3
-      manifest: |            #put your kubernetes spec here
-        apiVersion: apps/v1
-        kind: Deployment
+      manifest: |               #put your kubernetes spec here
+        apiVersion: batch/v1
+        kind: Job
         metadata:
-          name: spring-boot-app
-          labels:
-            app: spring-boot-app
+          generateName: pi-job-
         spec:
-          replicas: 1
-          selector:
-            matchLabels:
-              app: spring-boot-app
           template:
             metadata:
-              labels:
-                app: spring-boot-app
+              name: pi
             spec:
               containers:
-              - image: gazgeek/springboot-helloworld
-                name: springboot-helloworld
-                imagePullPolicy: IfNotPresent
-                ports:
-                - containerPort: 9080
+              - name: pi
+                image: perl
+                command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+              restartPolicy: Never
+          backoffLimit: 4
