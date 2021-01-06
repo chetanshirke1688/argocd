@@ -2,16 +2,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata: 
-  name: k8s-jobs-poc
+  name: k8s-jobs-poc-test-1
 spec: 
-  entrypoint: pi-tmpl
+  entrypoint: spring-boot-app
   templates: 
-    - 
-      name: pi-tmpl
+    - name: spring-boot-app
       resource: 
-        action: create
-        failureCondition: "status.failed > 3"
-        manifest: |               #put your kubernetes spec here
+        action: apply
+        manifest:
           apiVersion: apps/v1
           kind: Deployment
           metadata: 
@@ -29,10 +27,6 @@ spec:
                   app: spring-boot-app
               spec: 
                 containers: 
-                  - 
-                    image: gazgeek/springboot-helloworld
-                    imagePullPolicy: IfNotPresent
-                    name: springboot-helloworld
-                    ports: 
-                      - 
-                        containerPort: 9080
+                  - image: gazgeek/springboot-helloworld
+                    imagePullPolicy: always
+                    name: spring-boot-app
